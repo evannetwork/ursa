@@ -1589,6 +1589,34 @@ mod tests {
     }
 
     #[test]
+    fn issuer_new_credential_def_with_primes_works() {
+        MockHelper::inject();
+
+        let p_safe = BigNumber::from_dec("354523743991077536080894975731562551581529686893149094297102723909349187222651576180417390984965767355243859266881031427418507634277300529382744530540561250993165409731374226909016411906383603958061650234880705686790345244242716450001775952814165876503392619880850005545420299881027970160676053165184271093843").unwrap();
+        let q_safe = BigNumber::from_dec("275286699043115487852101782881471925285425232532563457037882593872089382617575828792512206695091537480973072731631999932441533079584122777128509622381066757335349592950209778579166856626597096125274011246274658744982010121160434017310112434475706961336173524810385195497780906001596548229668920176826695085339").unwrap();
+
+        let (pub_key, priv_key, mut key_correctness_proof) =
+            Issuer::new_credential_def_with_primes(
+                &mocks::credential_schema(),
+                &mocks::non_credential_schema(),
+                true,
+                &p_safe,
+                &q_safe,
+            )
+            .unwrap();
+        key_correctness_proof.xr_cap.sort();
+        assert!(pub_key.r_key.is_some());
+        assert!(priv_key.r_key.is_some());
+        Prover::check_credential_key_correctness_proof(
+            &mocks::credential_primary_public_key(),
+            &mocks::credential_key_correctness_proof(),
+        )
+        .unwrap();
+        Prover::check_credential_key_correctness_proof(&pub_key.p_key, &key_correctness_proof)
+            .unwrap();
+    }
+
+    #[test]
     fn issuer_new_credential_def_works_without_revocation_part() {
         MockHelper::inject();
         let (pub_key, priv_key, mut key_correctness_proof) = Issuer::new_credential_def(
