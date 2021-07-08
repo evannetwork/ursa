@@ -3,7 +3,8 @@ pub const ALGORITHM_NAME: &str = "ED25519_SHA2_512";
 use super::{KeyGenOption, SignatureScheme};
 #[cfg(any(feature = "x25519", feature = "x25519_asm"))]
 use ed25519_dalek::SecretKey as SK;
-use ed25519_dalek::{Keypair, PublicKey as PK, Signature};
+use ed25519_dalek::{ed25519::signature::Signature, Signer, Verifier};
+use ed25519_dalek::{Keypair, PublicKey as PK};
 pub use ed25519_dalek::{
     EXPANDED_SECRET_KEY_LENGTH as PRIVATE_KEY_SIZE, PUBLIC_KEY_LENGTH as PUBLIC_KEY_SIZE,
     SIGNATURE_LENGTH as SIGNATURE_SIZE,
